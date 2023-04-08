@@ -1,0 +1,12 @@
+.playlist-cover {
+    padding-left: 14px;
+}
+.selected-playlist {
+    background-color: #f1f8e9;
+}
+.submit-button {
+    background-color: #1ED760;
+}
+.submit-button:hover {
+    background-color: #1cc055;
+}

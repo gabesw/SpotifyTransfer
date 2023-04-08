@@ -1,0 +1,40 @@
+{% extends "home/base.html" %}
+{% block title %} Transfer {% endblock %}
+
+{% block content %}
+<div class="row">
+    <h2 class="center col s12">Welcome to Spotify Transfer!</h2>
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content row valign-wrapper">
+          <span class="card-title">Enter Spotify User URL:</span>
+          <br>
+          <div class="input-field col s8">
+            <textarea id="userUrl" class="materialize-textarea"></textarea>
+            <label for="userUrl">User URL</label>
+          </div>
+          <button class="btn waves-effect waves-light right col s4" id="submit" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+function submit()
+{
+  var userUrl = document.getElementById("userUrl").value;
+  const match = userUrl.match(/user\/([^?]+)\?/);
+  const extractedData = match ? match[1] : null;
+  if(extractedData == null) alert("You must enter a valid URL."); //TODO: make nicer popup with materialize
+  else
+  {
+    var url = "/transfer/".concat(extractedData, "/", "{{ code }}"); //get userid from input field
+    window.location.href = url; //redirect to transfer page with userid
+  }
+}
+
+var button = document.getElementById("submit");
+button.addEventListener("click", submit);
+</script>
+{% endblock %}

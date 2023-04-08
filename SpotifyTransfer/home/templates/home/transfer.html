@@ -1,0 +1,72 @@
+{% extends "home/base.html" %}
+{% block title %} Transfer {% endblock %}
+
+{% block content %}
+<div class="row">
+    <h2 class="center col s12">Select Playlists to Transfer:</h2>
+    <div class="col s6 offset-s3">
+    <!--TODO: add if statement if there are no playlists to show a message-->
+    {% for playlist in playlists %}
+      <div class="card horizontal hoverable playlist" id="{{ playlist.id }}" name="{{ playlist.name }}" onclick="togglePlaylistSelected(this)">
+        <div class="card-image playlist-cover valign-wrapper">
+          <!-- Display the cover image -->
+          <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" width="60" height="60">
+        </div>
+        <div class="card-stacked">
+          <div class="card-content">
+            <!-- Display the name of the playlist -->
+            <span class="card-title">{{ playlist.name }}</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="center">
+      {% csrf_token %}
+      <button class="col s12 btn-large submit-button" type="submit" id="submit" name="action">Transfer
+        <i class="material-icons right">send</i>
+      </button>
+    </div>
+
+    </div>
+</div>
+
+<script>
+//function to select playlist when clicked on by adding the selected-playlist class
+function togglePlaylistSelected(element)
+{
+    if(element.classList.contains("selected-playlist")) element.classList.remove("selected-playlist");
+    else element.classList.add("selected-playlist")
+}
+function submitPlaylists()
+{
+  //const playlist_ids = [];
+  var playlist_ids = {};
+  playlists = document.getElementsByClassName("selected-playlist") //get all selected playlists
+  for(var playlist of playlists)
+  {
+    //playlist_ids.push(playlist.id);
+    playlist_ids[playlist.id] = playlist.getAttribute("name");
+    //TODO: it does not conform to HTML standards to put a name field on a div so i can just pack it into the id and separate the name and id with a colon and split it
+  }
+  console.log(playlist_ids); //DEBUG
+  //TODO: send json array of playlists and the code variable from context to createPlaylists view
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  fetch("/create/", {
+    method: "POST",
+    body: JSON.stringify({
+      code: "{{ code }}",
+      user_id: "{{ user_id }}",
+      playlists: playlist_ids,
+      credentials: 'include'
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+      'X-CSRFToken': csrftoken
+    }
+  })
+}
+
+var button = document.getElementById("submit");
+button.addEventListener("click", submitPlaylists)
+</script>
+{% endblock %}
